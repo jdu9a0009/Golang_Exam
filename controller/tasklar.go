@@ -260,33 +260,35 @@ func (c *Controller) Task8() []ProductSales {
 	products := productData.Products
 	shopcarts, _ := readShopCart("data/shop_cart.json")
 
-	prodCount := make(map[string]int)
-	prodDay := make(map[string]string)
 	prodName := make(map[string]string)
 	for _, p := range products {
 		prodName[p.Id] = p.Name
 	}
+
+	productSales := make(map[string]map[string]int)
 	for _, v := range shopcarts {
-		prodCount[v.ProductId] += v.Count
-		prodDay[v.ProductId] = v.Time
+		if _, ok := productSales[v.Time[:10]]; !ok {
+			productSales[v.Time[:10]] = make(map[string]int)
+		}
+		productSales[v.Time[:10]][v.ProductId] += v.Count
 	}
-
-	var productSales []ProductSales
-
-	for productID, count := range prodCount {
-		productSales = append(productSales, ProductSales{
-			Day:       prodDay[productID],
-			ProductID: prodName[productID],
-			Count:     count,
-		})
+	var ProductSalesSlice []ProductSales
+	for createdAt, values := range productSales {
+		for productID, count := range values {
+			ProductSalesSlice = append(ProductSalesSlice, ProductSales{
+				ProductID: prodName[productID],
+				Day:       createdAt,
+				Count:     count,
+			})
+		}
 	}
 
 	// Sort the productSales slice based on the count in descending order
-	sort.Slice(productSales, func(i, j int) bool {
-		return productSales[i].Count > productSales[j].Count
+	sort.Slice(ProductSalesSlice, func(i, j int) bool {
+		return ProductSalesSlice[i].Count > ProductSalesSlice[j].Count
 	})
 
-	return productSales
+	return ProductSalesSlice
 }
 
 // 9. Qaysi category larda qancha mahsulot sotilgan boyicha jadval
@@ -346,7 +348,7 @@ func (c *Controller) Task10() []UserCountData {
 	sort.Slice(countDataSlice, func(i, j int) bool {
 		return countDataSlice[i].Count > countDataSlice[j].Count
 	})
-	return countDataSlice[:2]
+	return countDataSlice[:1]
 }
 
 // 11. Agar User 9 dan kop mahuslot sotib olgan bolsa,
