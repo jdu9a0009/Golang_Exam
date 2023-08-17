@@ -8,6 +8,7 @@ import (
 )
 
 type StoreJSON struct {
+	branch   *BranchRepo
 	user     *UserRepo
 	category *CategoryRepo
 	product  *ProductRepo
@@ -16,6 +17,10 @@ type StoreJSON struct {
 
 func NewConnectionJSON(cfg *config.Config) (storage.StorageI, error) {
 
+	branchFile, err := os.Open(cfg.Path + cfg.BranchFileName)
+	if err != nil {
+		return nil, err
+	}
 	userFile, err := os.Open(cfg.Path + cfg.UserFileName)
 	if err != nil {
 		return nil, err
@@ -37,6 +42,7 @@ func NewConnectionJSON(cfg *config.Config) (storage.StorageI, error) {
 	}
 
 	return &StoreJSON{
+		branch:   NewBranchRepo(cfg.Path+cfg.BranchFileName, branchFile),
 		user:     NewUserRepo(cfg.Path+cfg.UserFileName, userFile),
 		category: NewCategoryRepo(cfg.Path+cfg.CategoryFileName, categoryFile),
 		product:  NewProductRepo(cfg.Path+cfg.ProductFileName, productFile),
@@ -44,6 +50,9 @@ func NewConnectionJSON(cfg *config.Config) (storage.StorageI, error) {
 	}, nil
 }
 
+func (o *StoreJSON) Branch() storage.BranchRepoI {
+	return o.branch
+}
 func (u *StoreJSON) User() storage.UserRepoI {
 	return u.user
 }

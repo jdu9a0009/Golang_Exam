@@ -354,21 +354,22 @@ func (c *Controller) Task11() []int {
 	orderData, _ := c.OrderGetList(&models.OrderGetListRequest{})
 	orders := orderData.Orders
 	TotalSlice := make([]int, 0)
-	minPrice := math.MaxInt32
 
 	for _, order := range orders {
-		for _, item := range order.OrderItems {
-			if item.TotalPrice < minPrice {
-				minPrice = item.TotalPrice
+		if order.SumCount > 9 {
+			minPrice := math.MaxInt32
+			for _, item := range order.OrderItems {
+				if item.TotalPrice < minPrice {
+					minPrice = item.TotalPrice
+				}
 			}
+			Total := order.Sum - minPrice
+			TotalSlice = append(TotalSlice, Total)
 		}
-		Total := order.Sum - minPrice
-		TotalSlice = append(TotalSlice, Total)
 	}
 
 	return TotalSlice
 }
-
 func readShopCart(data string) ([]models.ShopCartS, error) {
 	var shopcarts []models.ShopCartS
 

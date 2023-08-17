@@ -15,6 +15,7 @@ type Config struct {
 	DefaultLimit  int
 
 	Path             string
+	BranchFileName   string
 	UserFileName     string
 	CategoryFileName string
 	ProductFileName  string
@@ -29,6 +30,7 @@ func Load() Config {
 	cfg.DefaultLimit = 10
 
 	cfg.Path = "./data"
+	cfg.BranchFileName = "/branch.json"
 	cfg.UserFileName = "/user.json"
 	cfg.CategoryFileName = "/category.json"
 	cfg.ProductFileName = "/product.json"

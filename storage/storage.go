@@ -5,10 +5,19 @@ import (
 )
 
 type StorageI interface {
+	Branch() BranchRepoI
 	User() UserRepoI
 	Category() CategoryRepoI
 	Product() ProductRepoI
 	Order() OrderRepoI
+}
+
+type BranchRepoI interface {
+	Create(*models.CreateBranch) (*models.BranchPrimaryKey, error)
+	GetById(*models.BranchPrimaryKey) (*models.Branch, error)
+	GetList(*models.BranchGetListRequest) (*models.BranchGetListResponse, error)
+	Update(*models.Branch) (*models.Branch, error)
+	Delete(*models.BranchPrimaryKey) (string, error)
 }
 
 type UserRepoI interface {
